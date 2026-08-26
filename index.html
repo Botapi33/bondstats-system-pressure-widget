@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#080b0a">
+<meta name="robots" content="noindex,nofollow">
+<title>BondStats System Pressure Index Widget</title>
+<style>
+:root{--bg:#080b0a;--panel:#0b0f0d;--text:#f4f6f4;--muted:#8d9791;--muted2:#626b66;--line:#202723;--green:#75d36b;--green2:#a5e99f;--amber:#d3ad66;--red:#d96b61}
+*{box-sizing:border-box}html,body{margin:0;background:transparent;color:var(--text);font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;-webkit-font-smoothing:antialiased}body{padding:0}.widget{width:100%;min-height:300px;background:var(--bg);border:1px solid var(--line);border-radius:18px;overflow:hidden;position:relative}.inner{padding:28px 30px 24px}.top{display:flex;align-items:flex-start;justify-content:space-between;gap:20px}.eyebrow{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:650}.title{margin:7px 0 0;font-size:25px;line-height:1.08;letter-spacing:-.045em;font-weight:650}.live{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:10px;white-space:nowrap}.dot{width:6px;height:6px;border-radius:50%;background:var(--amber)}.dot.ok{background:var(--green)}.dot.bad{background:var(--red)}.dot.loading{animation:pulse 1.2s infinite}@keyframes pulse{50%{opacity:.3}}
+.main{display:grid;grid-template-columns:minmax(220px,.75fr) minmax(260px,1.25fr);gap:34px;align-items:end;margin-top:30px}.scoreRow{display:flex;align-items:flex-end;gap:10px}.score{font-size:86px;line-height:.77;letter-spacing:-.075em;font-weight:540}.denom{padding-bottom:7px;color:var(--muted);font-size:16px}.state{margin-top:17px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:760;color:var(--green2)}.state.warn{color:var(--amber)}.state.high{color:var(--red)}.summary{margin:10px 0 0;color:#b0b8b3;font-size:13px;line-height:1.55;max-width:310px}
+.context{border-left:1px solid var(--line);padding-left:30px}.leadLabel{font-size:9px;letter-spacing:.11em;text-transform:uppercase;color:var(--muted);font-weight:650}.leadMarket{display:flex;align-items:baseline;justify-content:space-between;gap:18px;margin-top:8px}.leadMarket strong{font-size:19px;letter-spacing:-.03em;font-weight:620}.leadScore{color:var(--green);font-size:24px;font-weight:620;font-variant-numeric:tabular-nums}.leadScore small{color:var(--muted);font-size:10px;font-weight:500}.metrics{display:grid;grid-template-columns:1fr 1fr;gap:12px 28px;margin-top:21px;padding-top:18px;border-top:1px solid var(--line)}.metric span{display:block;color:var(--muted);font-size:9px;letter-spacing:.08em;text-transform:uppercase}.metric b{display:block;margin-top:6px;color:#dce1de;font-size:11px;font-weight:560;font-variant-numeric:tabular-nums}
+.gauge{margin-top:26px}.labels{display:flex;justify-content:space-between;color:var(--muted2);font-size:8px;letter-spacing:.08em;text-transform:uppercase}.track{height:2px;background:#29302c;margin-top:9px;position:relative}.fill{height:100%;width:0;background:var(--green)}.marker{position:absolute;top:50%;left:0;width:10px;height:10px;border-radius:50%;background:var(--green);transform:translate(-50%,-50%)}
+.bottom{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-top:23px;padding-top:17px;border-top:1px solid var(--line)}.meta{color:var(--muted2);font-size:9px;line-height:1.4}.cta{display:inline-flex;align-items:center;gap:8px;color:var(--green2);text-decoration:none;font-size:11px;font-weight:620;white-space:nowrap}.cta:hover{color:#c2f2bd}.arrow{font-size:14px}.error{margin-top:18px;color:#d9a09a;font-size:11px;line-height:1.5}
+/* Mobile is intentionally a different information hierarchy, not a scaled desktop card. */
+.mobileMeta{display:none}
+@media(max-width:680px){
+  .widget{min-height:0;border-radius:12px;border-color:#1a211d}
+  .inner{padding:18px 18px 16px}
+  .top{align-items:center;gap:10px}
+  .eyebrow{display:none}
+  .title{margin:0;font-size:18px;line-height:1.1;letter-spacing:-.035em;font-weight:650}
+  .live{font-size:0;gap:0}
+  .live .dot{width:7px;height:7px}
+  .main{display:block;margin-top:20px}
+  .scoreRow{gap:7px;align-items:flex-end}
+  .score{font-size:64px;line-height:.78;letter-spacing:-.07em;font-weight:540}
+  .denom{font-size:13px;padding-bottom:4px}
+  .state{margin-top:12px;font-size:10px;letter-spacing:.1em}
+  .summary{margin-top:7px;max-width:100%;font-size:11.5px;line-height:1.45;color:#aab2ad;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .context{display:none}
+  .gauge{margin-top:18px}
+  .labels{font-size:7px;letter-spacing:.065em}
+  .labels span:nth-child(4){display:none}
+  .track{margin-top:7px}
+  .marker{width:8px;height:8px}
+  .mobileMeta{display:block;margin-top:13px;color:var(--muted);font-size:9px;letter-spacing:.01em;font-variant-numeric:tabular-nums}
+  .bottom{margin-top:13px;padding-top:12px;justify-content:flex-start;border-top:1px solid #171d19}
+  .meta{display:none}
+  .cta{font-size:10px}
+  .error{margin-top:10px;font-size:10px}
+}
+@media(max-width:390px){
+  .inner{padding:16px 15px 14px}
+  .title{font-size:17px}
+  .score{font-size:58px}
+  .summary{font-size:11px}
+  .gauge{margin-top:16px}
+}
+</style>
+</head>
+<body>
+<article class="widget" aria-label="BondStats System Pressure Index live widget">
+<div class="inner">
+  <div class="top">
+    <div><div class="eyebrow">BondStats</div><h1 class="title">System Pressure Index</h1></div>
+    <div class="live"><i id="dot" class="dot loading"></i><span id="status">Updating</span></div>
+  </div>
+
+  <div class="main">
+    <section>
+      <div class="scoreRow"><div id="score" class="score">—</div><div class="denom">/100</div></div>
+      <div id="state" class="state">Waiting for data</div>
+      <p id="summary" class="summary">Loading the latest sovereign-rate pressure reading.</p>
+    </section>
+
+    <section class="context">
+      <div class="leadLabel">Highest current pressure</div>
+      <div class="leadMarket"><strong id="leadMarket">—</strong><span id="leadScore" class="leadScore">— <small>/100</small></span></div>
+      <div class="metrics">
+        <div class="metric"><span>Fresh markets</span><b id="marketCount">—</b></div>
+        <div class="metric"><span>Observation</span><b id="observation">—</b></div>
+        <div class="metric"><span>Median 10Y yield</span><b id="medianYield">—</b></div>
+        <div class="metric"><span>Median daily move</span><b id="medianMove">—</b></div>
+      </div>
+    </section>
+  </div>
+
+  <div class="gauge" aria-hidden="true">
+    <div class="labels"><span>Normal</span><span>Building</span><span>Elevated</span><span>High</span></div>
+    <div class="track"><div id="fill" class="fill"></div><div id="marker" class="marker"></div></div>
+  </div>
+
+  <div id="mobileMeta" class="mobileMeta">— markets · — observation</div>
+
+  <div class="bottom">
+    <div id="meta" class="meta">Live BondStats Global Yields · transparent fixed methodology</div>
+    <a class="cta" href="https://botapi33.github.io/bondstats-system-pressure-index/" target="_blank" rel="noopener">Open full index <span class="arrow">↗</span></a>
+  </div>
+  <div id="error" class="error" hidden></div>
+</div>
+</article>
+<script>
+const DATA_URL='https://botapi33.github.io/bondstats-global-yields/global_yields.json';
+const CONFIG={maxFreshDays:7,minEligibleMarkets:5,weights:{level:40,move:25,breadth:20,direction:15},breadthThresholdBps:3,directionThresholdBps:1};
+const clamp=(x,lo=0,hi=100)=>Math.max(lo,Math.min(hi,x));
+function linearScore(value,stops){if(!Number.isFinite(value))return null;if(value<=stops[0][0])return stops[0][1];for(let i=1;i<stops.length;i++){const[x1,y1]=stops[i],[x0,y0]=stops[i-1];if(value<=x1)return y0+((value-x0)*(y1-y0))/(x1-x0)}return stops.at(-1)[1]}
+function median(v){const a=v.filter(Number.isFinite).sort((x,y)=>x-y);if(!a.length)return null;const m=Math.floor(a.length/2);return a.length%2?a[m]:(a[m-1]+a[m])/2}
+function num(v){if(v===null||v===undefined||v==='')return null;const n=typeof v==='number'?v:Number(String(v).replace('%','').replace(',','.').trim());return Number.isFinite(n)?n:null}
+function parse(raw){if(!raw?.countries)throw new Error('Unexpected BondStats data structure.');const markets=Object.entries(raw.countries).map(([key,r])=>{const value=num(r.value),prev=num(r.previousValue),rawChange=num(r.change),chg=rawChange??(Number.isFinite(value)&&Number.isFinite(prev)?value-prev:null);return{label:r.label||key.replaceAll('_',' '),source:r.source||'unknown',frequency:r.frequency||'Unknown',date:r.date||'',value,changeBps:Number.isFinite(chg)?chg*100:null,stalenessDays:num(r.stalenessDays),isFallback:Boolean(r.isFallback)}}).filter(m=>Number.isFinite(m.value));return{markets,updated:raw.meta?.lastUpdated||''}}
+function eligible(m){return String(m.frequency).toLowerCase()==='daily'&&Number.isFinite(m.value)&&Number.isFinite(m.changeBps)&&Number.isFinite(m.stalenessDays)&&m.stalenessDays<=CONFIG.maxFreshDays&&!m.isFallback}
+function levelScore(v){return clamp(linearScore(v,[[0,0],[1,8],[2,20],[3,35],[4,55],[5,72],[6,84],[8,96],[10,100]]))}
+function moveScore(v){return clamp(linearScore(v,[[0,0],[1,8],[2,18],[3,30],[5,48],[8,66],[12,80],[20,93],[30,100]]))}
+function marketPressure(m){const l=levelScore(m.value),mv=moveScore(Math.abs(m.changeBps||0)),r=m.changeBps>CONFIG.directionThresholdBps?linearScore(m.changeBps,[[1,10],[3,35],[5,60],[10,85],[20,100]]):0;return clamp(l*.6+mv*.25+r*.15)}
+function stateFor(s){if(s<=24)return'Contained';if(s<=39)return'Normal';if(s<=54)return'Pressure Building';if(s<=69)return'Elevated';if(s<=84)return'High';return'Extreme'}
+function narrative(s){const x=stateFor(s);return{Contained:'Pressure is contained across the fresh sovereign-rate universe.',Normal:'Pressure remains contained. Daily rate moves are broadly orderly across the eligible sovereign universe.','Pressure Building':'Pressure is building across the monitored sovereign-rate universe and warrants closer attention.',Elevated:'Elevated pressure is visible across several sovereign-rate dimensions.',High:'High pressure is present across the monitored sovereign-rate universe.',Extreme:'The index is registering extreme sovereign-rate pressure under the published methodology.'}[x]}
+function calculate(ds){const e=ds.markets.filter(eligible);if(e.length<CONFIG.minEligibleMarkets)throw new Error(`Only ${e.length} fresh daily markets are eligible.`);const medYield=median(e.map(m=>m.value)),medMove=median(e.map(m=>Math.abs(m.changeBps))),breadth=e.filter(m=>Math.abs(m.changeBps)>=CONFIG.breadthThresholdBps).length/e.length,rising=e.filter(m=>m.changeBps>=CONFIG.directionThresholdBps).length/e.length;const comps=[{s:levelScore(medYield),w:40},{s:moveScore(medMove),w:25},{s:breadth*100,w:20},{s:rising*100,w:15}];const score=comps.reduce((a,c)=>a+c.s*c.w,0)/100;const ranking=e.map(m=>({...m,pressure:marketPressure(m)})).sort((a,b)=>b.pressure-a.pressure);return{score,state:stateFor(score),summary:narrative(score),eligible:e,ranking,medYield,medMove,updated:ds.updated}}
+function date(v){if(!v)return'—';const d=new Date(`${v}T00:00:00Z`);return Number.isNaN(d)?v:new Intl.DateTimeFormat('en-GB',{day:'2-digit',month:'short',year:'numeric',timeZone:'UTC'}).format(d)}
+function stateClass(s){return s==='High'||s==='Extreme'?'state high':(s==='Pressure Building'||s==='Elevated'?'state warn':'state')}
+async function load(){const dot=document.getElementById('dot'),status=document.getElementById('status'),error=document.getElementById('error');try{const r=await fetch(`${DATA_URL}?t=${Date.now()}`,{cache:'no-store'});if(!r.ok)throw new Error(`Data returned HTTP ${r.status}.`);const out=calculate(parse(await r.json()));const s=Math.round(out.score),lead=out.ranking[0];document.getElementById('score').textContent=s;const st=document.getElementById('state');st.textContent=out.state;st.className=stateClass(out.state);document.getElementById('summary').textContent=out.summary;document.getElementById('leadMarket').textContent=lead?.label||'—';document.getElementById('leadScore').innerHTML=`${lead?Math.round(lead.pressure):'—'} <small>/100</small>`;document.getElementById('marketCount').textContent=out.eligible.length;const obsDate=date(out.eligible.map(m=>m.date).filter(Boolean).sort().at(-1));document.getElementById('observation').textContent=obsDate;document.getElementById('mobileMeta').textContent=`${out.eligible.length} markets · ${obsDate} observation`;document.getElementById('medianYield').textContent=`${out.medYield.toFixed(2)}%`;document.getElementById('medianMove').textContent=`${out.medMove.toFixed(1)} bp`;document.getElementById('fill').style.width=`${clamp(s)}%`;document.getElementById('marker').style.left=`${clamp(s)}%`;document.getElementById('meta').textContent=`Live BondStats Global Yields · source updated ${date(out.updated)}`;dot.className='dot ok';status.textContent='Live';error.hidden=true}catch(err){console.error(err);dot.className='dot bad';status.textContent='Unavailable';error.textContent=`Unable to load the current index: ${err.message}`;error.hidden=false}}
+load();setInterval(load,15*60*1000);
+</script>
+</body>
+</html>
